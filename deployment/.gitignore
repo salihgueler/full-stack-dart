@@ -1,0 +1,50 @@
+# Deployment .gitignore
+
+# Environment files
+.env
+.env.local
+*.env.json
+*.env.yaml
+
+# AWS credentials
+aws-credentials.json
+aws.json
+credentials.json
+
+# Build artifacts
+*.zip
+*.tar.gz
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+terraform.tfvars
+
+# CDK
+cdk.out/
+cdk.context.json
+
+# SAM
+.aws-sam/
+samconfig.toml
+
+# Docker
+.dockerignore

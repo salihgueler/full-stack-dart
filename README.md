@@ -35,10 +35,13 @@ full-stack-dart/
 │   │   └── widgets/        # Reusable widgets and animations
 │   └── test/               # Frontend tests
 ├── shared/                 # Shared models and utilities
-└── deployment/             # AWS deployment configuration
-    ├── Dockerfile          # Container definition
-    └── apprunner.yaml      # AWS App Runner configuration
+├── presentation/           # Presentation materials
+│   ├── presentation.md     # Comprehensive presentation content
+│   └── assets/             # Images and diagrams for presentation
+└── .gitignore              # Root gitignore file
 ```
+
+Each subdirectory has its own `.gitignore` file with appropriate rules for that project type.
 
 ## Development Setup
 
@@ -76,21 +79,18 @@ full-stack-dart/
    flutter run -d chrome -t lib/main_serverpod.dart
    ```
 
-## AWS Deployment Steps
+## Git Management
 
-1. Build and push Docker image
-2. Create AWS App Runner service
-3. Configure environment variables
-4. Deploy the application
+This repository uses `.gitignore` files in each directory to prevent committing unnecessary files. If you've accidentally committed files that should be ignored:
 
-## Presentation Flow
+1. Use the provided cleanup script:
+   ```bash
+   ./git_cleanup.sh
+   ```
 
-1. Introduction to full-stack Dart development
-2. Architecture overview of the emoji reaction app
-3. Building the WebSocket server with Dart Shelf
-4. Implementing a more structured backend approach
-5. Implementing real-time communication
-6. Adding animations for emoji reactions
-7. Deploying to AWS
-8. Live demo with audience participation
-9. Common considerations as a full-stack developer
+2. For removing files from git history (use with caution):
+   ```bash
+   ./remove_from_git_history.sh
+   ```
+
+Note: Removing files from git history will rewrite commits and require a force push.

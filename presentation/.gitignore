@@ -1,0 +1,32 @@
+# Presentation materials .gitignore
+
+# Generated presentation files
+*.pdf
+*.pptx
+*.key
+*.odp
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Image editing files
+*.psd
+*.ai
+*.sketch
+*.fig
+
+# Video files (if large)
+*.mp4
+*.mov
+*.avi
+
+# Audio files
+*.mp3
+*.wav
+*.aac

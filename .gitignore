@@ -1,2 +1,40 @@
-/.DS_Store
-/speaker_notes.md
+# Root project .gitignore
+
+# Dart/Flutter general
+.dart_tool/
+.packages
+.pub/
+build/
+pubspec.lock
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Environment files
+.env
+.env.local
+*.env.json
+
+# Deployment artifacts
+*.zip
+*.tar.gz
+
+# Logs
+*.log
+logs/
+
+# Documentation artifacts
+doc/api/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+/presentation.md
