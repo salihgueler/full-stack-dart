@@ -1,0 +1,14 @@
+version: 1.0
+runtime: custom
+build:
+  commands:
+    build:
+      - echo "Build already completed in Dockerfile"
+run:
+  command: /app/server
+  network:
+    port: 8080
+    env: PORT
+  env:
+    - name: ENVIRONMENT
+      value: production

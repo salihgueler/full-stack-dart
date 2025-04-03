@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emoji Reaction App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h1 { color: #333; }
+    .container {
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    code {
+      background-color: #e0e0e0;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Emoji Reaction App</h1>
+  <p>This is a placeholder page. The Flutter web app will be served here when deployed.</p>
+  
+  <div class="container">
+    <h2>Development Information</h2>
+    <p>WebSocket endpoint is available at: <code>ws://localhost:8080/ws</code></p>
+    <p>To test the WebSocket connection, you can use the browser console:</p>
+    <pre><code>
+const socket = new WebSocket('ws://localhost:8080/ws');
+socket.onopen = () => console.log('Connected!');
+socket.onmessage = (event) => console.log('Message:', event.data);
+socket.send(JSON.stringify({type: 'reaction', emoji: '👍'}));
+    </code></pre>
+  </div>
+</body>
+</html>
