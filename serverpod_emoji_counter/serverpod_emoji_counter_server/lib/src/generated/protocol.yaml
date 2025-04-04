@@ -1,0 +1,7 @@
+example:
+  - hello:
+reaction:
+  - streamReactions:
+  - sendReaction:
+  - getReactionCounts:
+  - resetReactionCounts:
