@@ -1,14 +1,18 @@
-import 'dart:async';
 import 'dart:convert';
 
+import 'package:logging/logging.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import 'utils/logger.dart';
+
 class WebSocketHandler {
+  final Logger _logger = AppLogger.getLogger('WebSocketHandler');
+  
   // Store all active WebSocket connections
   final _connections = <WebSocketChannel>[];
-  
+
   // Store emoji reaction counts
   final Map<String, int> _emojiCounts = {
     '👍': 0,
@@ -20,27 +24,29 @@ class WebSocketHandler {
   };
 
   // Create the WebSocket handler
-  Handler get handler => webSocketHandler(_onWebSocketConnect);
+  Handler get handler => webSocketHandler((WebSocketChannel webSocket, String? protocol) {
+    _onWebSocketConnect(webSocket);
+  });
 
   // Handle new WebSocket connections
   void _onWebSocketConnect(WebSocketChannel webSocket) {
-    print('New client connected');
+    _logger.info('New client connected');
     _connections.add(webSocket);
-    
+
     // Send current emoji counts to the new client
     _sendEmojiCounts(webSocket);
-    
+
     // Listen for messages from the client
     webSocket.stream.listen(
       (message) {
         _handleMessage(webSocket, message);
       },
       onDone: () {
-        print('Client disconnected');
+        _logger.info('Client disconnected');
         _connections.remove(webSocket);
       },
       onError: (error) {
-        print('Error: $error');
+        _logger.severe('Error: $error');
         _connections.remove(webSocket);
       },
       cancelOnError: false,
@@ -50,24 +56,24 @@ class WebSocketHandler {
   // Handle incoming messages
   void _handleMessage(WebSocketChannel webSocket, dynamic message) {
     try {
-      print('Received message: $message');
+      _logger.fine('Received message: $message');
       final data = jsonDecode(message);
-      
+
       if (data['type'] == 'reaction') {
         final emoji = data['emoji'] as String;
         if (_emojiCounts.containsKey(emoji)) {
           _emojiCounts[emoji] = (_emojiCounts[emoji] ?? 0) + 1;
-          print('Incremented count for $emoji: ${_emojiCounts[emoji]}');
-          
+          _logger.info('Incremented count for $emoji: ${_emojiCounts[emoji]}');
+
           // Broadcast the reaction to all clients
           _broadcastReaction(emoji);
-          
+
           // Broadcast updated counts
           _broadcastEmojiCounts();
         }
       }
     } catch (e) {
-      print('Error handling message: $e');
+      _logger.warning('Error handling message: $e');
     }
   }
 
@@ -77,12 +83,12 @@ class WebSocketHandler {
       'type': 'counts',
       'counts': _emojiCounts,
     });
-    
+
     try {
       webSocket.sink.add(message);
-      print('Sent counts to new client: $message');
+      _logger.info('Sent counts to new client: $message');
     } catch (e) {
-      print('Error sending counts: $e');
+      _logger.severe('Error sending counts: $e');
     }
   }
 
@@ -92,14 +98,14 @@ class WebSocketHandler {
       'type': 'counts',
       'counts': _emojiCounts,
     });
-    
-    print('Broadcasting counts: $message');
-    
+
+    _logger.info('Broadcasting counts: $message');
+
     for (final connection in _connections) {
       try {
         connection.sink.add(message);
       } catch (e) {
-        print('Error broadcasting counts: $e');
+        _logger.severe('Error broadcasting counts: $e');
       }
     }
   }
@@ -110,14 +116,14 @@ class WebSocketHandler {
       'type': 'reaction',
       'emoji': emoji,
     });
-    
-    print('Broadcasting reaction: $emoji');
-    
+
+    _logger.fine('Broadcasting reaction: $emoji');
+
     for (final connection in _connections) {
       try {
         connection.sink.add(message);
       } catch (e) {
-        print('Error broadcasting reaction: $e');
+        _logger.severe('Error broadcasting reaction: $e');
       }
     }
   }
