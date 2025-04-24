@@ -49,11 +49,13 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PresenterScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const PresenterScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
               child: const Text('Presenter View'),
             ),
@@ -62,11 +64,13 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AudienceScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AudienceScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
               child: const Text('Audience View'),
             ),
@@ -106,21 +110,21 @@ class PresenterScreenState extends State<PresenterScreen> {
     try {
       // Open streaming connection
       await client.openStreamingConnection();
-      
+
       // Get initial reaction counts
       final counts = await client.reaction.getReactionCounts();
       setState(() {
         _reactionCounts.clear();
         _reactionCounts.addAll(counts);
       });
-      
+
       // Subscribe to reaction stream
       _reactionSubscription = client.reaction.streamReactions().listen(
-        _onReaction,
-        onError: _onError,
-        onDone: _onDisconnect,
-      );
-      
+            _onReaction,
+            onError: _onError,
+            onDone: _onDisconnect,
+          );
+
       setState(() {
         _connectionStatus = 'Connected';
         _isConnected = true;
@@ -130,7 +134,7 @@ class PresenterScreenState extends State<PresenterScreen> {
         _connectionStatus = 'Connection failed: $e';
         _isConnected = false;
       });
-      
+
       // Try to reconnect after a delay
       Future.delayed(const Duration(seconds: 3), _connectToServer);
     }
@@ -139,11 +143,12 @@ class PresenterScreenState extends State<PresenterScreen> {
   void _onReaction(Reaction reaction) {
     setState(() {
       // Update reaction count
-      _reactionCounts[reaction.emoji] = (_reactionCounts[reaction.emoji] ?? 0) + 1;
-      
+      _reactionCounts[reaction.emoji] =
+          (_reactionCounts[reaction.emoji] ?? 0) + 1;
+
       // Add to recent reactions
       _recentReactions.add(reaction);
-      
+
       // Keep only the last 20 reactions
       if (_recentReactions.length > 20) {
         _recentReactions.removeAt(0);
@@ -156,7 +161,7 @@ class PresenterScreenState extends State<PresenterScreen> {
       _connectionStatus = 'Error: $error';
       _isConnected = false;
     });
-    
+
     // Try to reconnect after a delay
     Future.delayed(const Duration(seconds: 3), _connectToServer);
   }
@@ -166,7 +171,7 @@ class PresenterScreenState extends State<PresenterScreen> {
       _connectionStatus = 'Disconnected';
       _isConnected = false;
     });
-    
+
     // Try to reconnect after a delay
     Future.delayed(const Duration(seconds: 3), _connectToServer);
   }
@@ -179,9 +184,11 @@ class PresenterScreenState extends State<PresenterScreen> {
         _recentReactions.clear();
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to reset counts: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to reset counts: $e')),
+        );
+      }
     }
   }
 
@@ -195,12 +202,13 @@ class PresenterScreenState extends State<PresenterScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isLargeScreen = screenSize.width > 600;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Presenter View'),
         actions: [
-          ConnectionStatusIndicator(isConnected: _isConnected, status: _connectionStatus),
+          ConnectionStatusIndicator(
+              isConnected: _isConnected, status: _connectionStatus),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetCounts,
@@ -298,10 +306,10 @@ class ReactionCountsDisplay extends StatelessWidget {
             child: Text('No reactions yet'),
           );
         }
-        
+
         final emoji = sortedEmojis[index];
         final count = counts[emoji] ?? 0;
-        
+
         return Card(
           elevation: 4,
           child: Column(
@@ -314,7 +322,8 @@ class ReactionCountsDisplay extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 '$count',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -345,7 +354,8 @@ class ReactionAnimationArea extends StatelessWidget {
         children: [
           for (var i = 0; i < reactions.length; i++)
             AnimatedReaction(
-              key: ValueKey('${reactions[i].emoji}-${reactions[i].timestamp.millisecondsSinceEpoch}'),
+              key: ValueKey(
+                  '${reactions[i].emoji}-${reactions[i].timestamp.millisecondsSinceEpoch}'),
               reaction: reactions[i],
               index: i,
             ),
@@ -369,7 +379,8 @@ class AnimatedReaction extends StatefulWidget {
   AnimatedReactionState createState() => AnimatedReactionState();
 }
 
-class AnimatedReactionState extends State<AnimatedReaction> with SingleTickerProviderStateMixin {
+class AnimatedReactionState extends State<AnimatedReaction>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   late double _leftPosition;
@@ -377,22 +388,22 @@ class AnimatedReactionState extends State<AnimatedReaction> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    
+
     // Random horizontal position
     _leftPosition = 50.0 + (widget.index * 20) % 300;
-    
+
     // Animation controller
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    
+
     // Animation that moves from bottom to top
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller)
       ..addListener(() {
         setState(() {});
       });
-    
+
     _controller.forward();
   }
 
@@ -419,11 +430,13 @@ class AnimatedReactionState extends State<AnimatedReaction> with SingleTickerPro
 }
 
 class QRCodeDisplay extends StatelessWidget {
+  const QRCodeDisplay({super.key});
+
   @override
   Widget build(BuildContext context) {
     // URL for audience to join
     final audienceUrl = 'http://$localhost:8080/';
-    
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -464,11 +477,23 @@ class AudienceScreen extends StatefulWidget {
 class AudienceScreenState extends State<AudienceScreen> {
   bool _isConnected = false;
   String _connectionStatus = 'Connecting...';
-  
+
   final List<String> _emojis = [
-    '👍', '❤️', '😂', '🎉', '👏',
-    '🔥', '🚀', '💯', '🙌', '😍',
-    '🤔', '😮', '😢', '👎', '😡',
+    '👍',
+    '❤️',
+    '😂',
+    '🎉',
+    '👏',
+    '🔥',
+    '🚀',
+    '💯',
+    '🙌',
+    '😍',
+    '🤔',
+    '😮',
+    '😢',
+    '👎',
+    '😡',
   ];
 
   @override
@@ -486,7 +511,7 @@ class AudienceScreenState extends State<AudienceScreen> {
     try {
       // Open streaming connection
       await client.openStreamingConnection();
-      
+
       setState(() {
         _connectionStatus = 'Connected';
         _isConnected = true;
@@ -496,7 +521,7 @@ class AudienceScreenState extends State<AudienceScreen> {
         _connectionStatus = 'Connection failed: $e';
         _isConnected = false;
       });
-      
+
       // Try to reconnect after a delay
       Future.delayed(const Duration(seconds: 3), _connectToServer);
     }
@@ -514,9 +539,11 @@ class AudienceScreenState extends State<AudienceScreen> {
       final reaction = Reaction(emoji: emoji, timestamp: DateTime.now());
       await client.reaction.sendReaction(reaction);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send reaction: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send reaction: $e')),
+        );
+      }
     }
   }
 
@@ -526,7 +553,8 @@ class AudienceScreenState extends State<AudienceScreen> {
       appBar: AppBar(
         title: const Text('Audience View'),
         actions: [
-          ConnectionStatusIndicator(isConnected: _isConnected, status: _connectionStatus),
+          ConnectionStatusIndicator(
+              isConnected: _isConnected, status: _connectionStatus),
         ],
       ),
       body: GridView.builder(
@@ -540,7 +568,7 @@ class AudienceScreenState extends State<AudienceScreen> {
         itemCount: _emojis.length,
         itemBuilder: (context, index) {
           final emoji = _emojis[index];
-          
+
           return InkWell(
             onTap: () => _sendReaction(emoji),
             child: Card(
