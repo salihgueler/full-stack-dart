@@ -6,14 +6,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the current URL to generate QR code
-    final currentUrl = Uri.base.toString();
     // For development, use localhost:8080 to ensure it points to the backend server
-    final baseUrl = Uri.base.toString().contains('localhost') 
-        ? 'http://localhost:8080' 
+    final baseUrl = Uri.base.toString().contains('localhost')
+        ? 'http://localhost:8080'
         : Uri.base.origin;
     final audienceUrl = '$baseUrl/#/audience';
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Emoji Reaction Counter'),

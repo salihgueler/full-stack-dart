@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../utils/logger.dart';
+
 class WebSocketService extends ChangeNotifier {
+  final Logger _logger = AppLogger.getLogger('WebSocketService');
   WebSocketChannel? _channel;
   bool _isConnected = false;
   String _error = '';
@@ -52,7 +56,7 @@ class WebSocketService extends ChangeNotifier {
   void connect([String? url]) {
     try {
       final wsUrl = url ?? getWebSocketUrl();
-      print('Connecting to WebSocket at: $wsUrl');
+      _logger.info('Connecting to WebSocket at: $wsUrl');
       
       _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
       
@@ -70,7 +74,7 @@ class WebSocketService extends ChangeNotifier {
     } catch (e) {
       _error = 'Failed to connect: $e';
       _isConnected = false;
-      print('WebSocket connection error: $e');
+      _logger.severe('WebSocket connection error: $e');
       notifyListeners();
     }
   }
@@ -85,7 +89,7 @@ class WebSocketService extends ChangeNotifier {
   // Send an emoji reaction
   void sendReaction(String emoji) {
     if (!_isConnected || _channel == null) {
-      print('Cannot send reaction: not connected');
+      _logger.warning('Cannot send reaction: not connected');
       return;
     }
     
@@ -95,20 +99,20 @@ class WebSocketService extends ChangeNotifier {
         'emoji': emoji,
       });
       
-      print('Sending reaction: $emoji');
+      _logger.info('Sending reaction: $emoji');
       _channel!.sink.add(message);
       
       // Add to local reactions immediately for better UX
       _recentReactions.add(emoji);
       notifyListeners();
     } catch (e) {
-      print('Error sending reaction: $e');
+      _logger.severe('Error sending reaction: $e');
     }
   }
   
   // Handle incoming WebSocket messages
   void _onMessage(dynamic message) {
-    print('Received message: $message');
+    _logger.fine('Received message: $message');
     
     try {
       final data = jsonDecode(message);
@@ -119,13 +123,13 @@ class WebSocketService extends ChangeNotifier {
         counts.forEach((emoji, count) {
           _emojiCounts[emoji] = count as int;
         });
-        print('Updated emoji counts: $_emojiCounts');
+        _logger.info('Updated emoji counts: $_emojiCounts');
         notifyListeners();
       } else if (data['type'] == 'reaction') {
         // Add to recent reactions for animation
         final emoji = data['emoji'] as String;
         _recentReactions.add(emoji);
-        print('Added reaction: $emoji');
+        _logger.fine('Added reaction: $emoji');
         
         // Limit the number of recent reactions to prevent memory issues
         // Increased to 200 to allow more animations on screen at once
@@ -135,13 +139,13 @@ class WebSocketService extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print('Error parsing message: $e');
+      _logger.warning('Error parsing message: $e');
     }
   }
   
   // Handle WebSocket disconnection
   void _onDisconnect() {
-    print('WebSocket disconnected');
+    _logger.info('WebSocket disconnected');
     _isConnected = false;
     _error = 'Disconnected from server';
     notifyListeners();
@@ -149,7 +153,7 @@ class WebSocketService extends ChangeNotifier {
     // Try to reconnect after a delay
     Future.delayed(const Duration(seconds: 3), () {
       if (!_isConnected) {
-        print('Attempting to reconnect...');
+        _logger.info('Attempting to reconnect...');
         connect();
       }
     });
@@ -157,7 +161,7 @@ class WebSocketService extends ChangeNotifier {
   
   // Handle WebSocket errors
   void _onError(error) {
-    print('WebSocket error: $error');
+    _logger.severe('WebSocket error: $error');
     _isConnected = false;
     _error = 'WebSocket error: $error';
     notifyListeners();

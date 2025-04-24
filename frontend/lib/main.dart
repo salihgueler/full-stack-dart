@@ -5,8 +5,12 @@ import 'services/websocket_service.dart';
 import 'screens/home_screen.dart';
 import 'screens/presenter_screen.dart';
 import 'screens/audience_screen.dart';
+import 'utils/logger.dart';
 
 void main() {
+  // Initialize logging system
+  AppLogger.init();
+  
   runApp(const MyApp());
 }
 

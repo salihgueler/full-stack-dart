@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 class EmojiCounter extends StatelessWidget {
   final String emoji;
   final int count;
-  
+
   const EmojiCounter({
     super.key,
     required this.emoji,
@@ -17,11 +17,11 @@ class EmojiCounter extends StatelessWidget {
       width: 120,
       height: 120,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -42,14 +42,11 @@ class EmojiCounter extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.primary,
             ),
-          )
-          .animate(key: ValueKey(count))
-          .fadeIn(duration: 300.ms)
-          .scale(
-            begin: const Offset(0.5, 0.5),
-            end: const Offset(1, 1),
-            duration: 300.ms,
-          ),
+          ).animate(key: ValueKey(count)).fadeIn(duration: 300.ms).scale(
+                begin: const Offset(0.5, 0.5),
+                end: const Offset(1, 1),
+                duration: 300.ms,
+              ),
         ],
       ),
     );
