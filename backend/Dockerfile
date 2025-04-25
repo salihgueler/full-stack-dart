@@ -1,8 +1,25 @@
-FROM dart:stable
+FROM --platform=$BUILDPLATFORM dart:stable AS build
 
+# Resolve app dependencies.
 WORKDIR /app
-COPY . .
+COPY pubspec.* ./
 RUN dart pub get
 
+# Copy app source code and AOT compile it.
+COPY . .
+# Ensure packages are still up-to-date if anything has changed
+RUN dart pub get --offline
+RUN dart compile exe bin/server.dart -o bin/server
+
+# Build minimal serving image from AOT-compiled `/server` and required system
+# libraries and configuration files stored in `/runtime/` from the build stage.
+FROM --platform=$TARGETPLATFORM scratch
+COPY --from=build /runtime/ /
+COPY --from=build /app/bin/server /app/bin/
+
+# Include files in the /static directory to enable static asset handling
+COPY --from=build /app/static/ /static
+
+# Start server.
 EXPOSE 8080
-CMD ["dart", "run", "bin/server.dart"]
+CMD ["/app/bin/server"]
