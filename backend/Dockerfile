@@ -7,12 +7,15 @@ COPY . .
 RUN dart pub get --offline
 
 # Build a minimal serving image
-FROM dart:stable-slim
+FROM dart:stable
 COPY --from=build /app /app
 WORKDIR /app
 
 # Make sure the application listens on port 8080
 ENV PORT=8080
+
+# Install dependencies in the final image
+RUN dart pub get
 
 # Start the application
 CMD ["dart", "bin/hello.dart"]
