@@ -1,8 +1,7 @@
 # Root project .gitignore
 
 # Dart/Flutter general
-.dart_tool/
-.packages
+**/.dart_tool/
 .pub/
 build/
 pubspec.lock
