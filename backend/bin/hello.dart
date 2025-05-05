@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
@@ -12,7 +13,9 @@ void main() async {
     return Response.ok('Hello $name');
   });
 
-  var server = await shelf_io.serve(handler, 'localhost', 8080);
+  // Get port from environment variable or use 8080 as default
+  var port = int.parse(Platform.environment['PORT'] ?? '8080');
+  var server = await shelf_io.serve(handler, '0.0.0.0', port);
 
   // Enable content compression
   server.autoCompress = true;
