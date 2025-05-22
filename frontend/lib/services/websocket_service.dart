@@ -7,6 +7,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../utils/logger.dart';
 
+const envUrl = String.fromEnvironment('WEB_SOCKET_LINK');
+
 class WebSocketService extends ChangeNotifier {
   final Logger _logger = AppLogger.getLogger('WebSocketService');
   WebSocketChannel? _channel;
@@ -35,7 +37,7 @@ class WebSocketService extends ChangeNotifier {
   // Get the appropriate WebSocket URL based on current environment
   String getWebSocketUrl() {
     // Check for environment variable using dotenv
-    const envUrl = String.fromEnvironment('WEB_SOCKET_LINK');
+    _logger.info('envUrl value is: $envUrl');
     if (envUrl.isNotEmpty) {
       _logger.info('Using WebSocket URL from environment: $envUrl');
       return envUrl;
