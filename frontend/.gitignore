@@ -81,3 +81,5 @@ app.*.map.json
 # OS specific files
 .DS_Store
 Thumbs.db
+
+assets/.env
