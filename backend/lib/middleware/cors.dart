@@ -4,14 +4,17 @@ import 'package:shelf/shelf.dart';
 Middleware corsMiddleware() {
   return (Handler innerHandler) {
     return (Request request) async {
+      // Handle preflight requests
       if (request.method == 'OPTIONS') {
-        // Handle preflight requests
         return Response.ok('', headers: _corsHeaders);
       }
-      
-      // Handle actual request
+
+      // Handle normal requests
       final response = await innerHandler(request);
-      return response.change(headers: {...response.headers, ..._corsHeaders});
+      return response.change(headers: {
+        ..._corsHeaders,
+        ...response.headers,
+      });
     };
   };
 }
@@ -20,6 +23,7 @@ Middleware corsMiddleware() {
 const _corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token, Accept',
+  'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
   'Access-Control-Allow-Credentials': 'true',
+  'Access-Control-Max-Age': '86400', // 24 hours
 };
