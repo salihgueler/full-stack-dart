@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'services/websocket_service.dart';
@@ -7,10 +8,11 @@ import 'screens/presenter_screen.dart';
 import 'screens/audience_screen.dart';
 import 'utils/logger.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   // Initialize logging system
   AppLogger.init();
-  
+
   runApp(const MyApp());
 }
 
