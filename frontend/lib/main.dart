@@ -9,7 +9,7 @@ import 'screens/audience_screen.dart';
 import 'utils/logger.dart';
 
 Future<void> main() async {
-  await dotenv.load();
+  await dotenv.load(fileName: "env");
   // Initialize logging system
   AppLogger.init();
 
