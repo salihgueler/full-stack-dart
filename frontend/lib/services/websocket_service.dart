@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -36,29 +35,29 @@ class WebSocketService extends ChangeNotifier {
   // Get the appropriate WebSocket URL based on current environment
   String getWebSocketUrl() {
     // Check for environment variable using dotenv
-    final envUrl = dotenv.env['WEB_SOCKET_LINK'];
-    if (envUrl != null && envUrl.isNotEmpty) {
+    final envUrl = String.fromEnvironment('WEB_SOCKET_LINK');
+    if (envUrl.isNotEmpty) {
       _logger.info('Using WebSocket URL from environment: $envUrl');
       return envUrl;
     }
-    
+
     // For web, determine the WebSocket URL based on the current page URL
     if (kIsWeb) {
       final location = Uri.base;
       final wsProtocol = location.scheme == 'https' ? 'wss' : 'ws';
-      
+
       if (location.toString().contains('localhost')) {
         return 'ws://localhost:8080/ws';
       }
-      
+
       return '$wsProtocol://${location.host}/ws';
     }
-    
+
     // For non-web platforms, check system environment variables
     if (!kIsWeb && Platform.environment.containsKey('WEB_SOCKET_LINK')) {
       return Platform.environment['WEB_SOCKET_LINK']!;
     }
-    
+
     // Default for non-web platforms
     return 'ws://localhost:8080/ws';
   }
