@@ -35,12 +35,12 @@ class WebSocketService extends ChangeNotifier {
   // Get the appropriate WebSocket URL based on current environment
   String getWebSocketUrl() {
     // First check if the WebSocket URL is provided via environment variable
-    if (!kIsWeb && Platform.environment.containsKey('WEB_SOCKET_LINK')) {
+    if (Platform.environment.containsKey('WEB_SOCKET_LINK')) {
       final envUrl = Platform.environment['WEB_SOCKET_LINK'];
       _logger.info('Using WebSocket URL from environment: $envUrl');
       return envUrl!;
     }
-    
+
     // For web, determine the WebSocket URL based on the current page URL
     if (kIsWeb) {
       final location = Uri.base;
