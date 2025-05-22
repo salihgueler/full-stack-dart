@@ -82,4 +82,4 @@ app.*.map.json
 .DS_Store
 Thumbs.db
 
-assets/dotenv
+dotenv
