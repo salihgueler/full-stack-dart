@@ -35,7 +35,7 @@ class WebSocketService extends ChangeNotifier {
   // Get the appropriate WebSocket URL based on current environment
   String getWebSocketUrl() {
     // Check for environment variable using dotenv
-    final envUrl = String.fromEnvironment('WEB_SOCKET_LINK');
+    const envUrl = String.fromEnvironment('WEB_SOCKET_LINK');
     if (envUrl.isNotEmpty) {
       _logger.info('Using WebSocket URL from environment: $envUrl');
       return envUrl;
